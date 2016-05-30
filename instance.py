@@ -7,4 +7,8 @@ from flask import Flask
 
 app = Flask(__name__)
 
-print('hehe')
+@app.route('/')
+def index():
+    return '<h1>hello,Flask!</h1>'
+
+
