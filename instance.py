@@ -4,8 +4,6 @@
 __author__ = 'Aaron_chan'
 
 
-
-
 from hello import app
 from flask import current_app
 
@@ -13,3 +11,4 @@ from flask import current_app
 app_cntx = app.app_context()
 app_cntx.push()
 print(current_app.name)
+print(app.url_map)
