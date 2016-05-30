@@ -3,12 +3,13 @@
 
 __author__ = 'Aaron_chan'
 
-from flask import Flask
-
-app = Flask(__name__)
-
-@app.route('/')
-def index():
-    return '<h1>hello,Flask!</h1>'
 
 
+
+from hello import app
+from flask import current_app
+
+#print(current_app.name)
+app_cntx = app.app_context()
+app_cntx.push()
+print(current_app.name)

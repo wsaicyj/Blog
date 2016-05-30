@@ -5,12 +5,15 @@ __author__ = 'Aaron_chan'
 
 
 from flask import Flask
+from flask import request
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return '<h1>hello,Flask</h1>'
+    user_agent = request.headers.get('User-Agent')
+    return '<h1>Your browser is %s!</h1>' % user_agent
+    #return '<h1>hello,Flask</h1>'
 
 @app.route('/user/<name>')
 def user(name):
