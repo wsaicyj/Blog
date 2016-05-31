@@ -16,15 +16,15 @@ from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
 #manager = Manager(app)
-bookstarp = Bootstrap(app)
+bootstarp = Bootstrap(app)
 
-@app.errorhandler(400)
-def page_not_found():
-    return render_template('404'),404
+@app.route('/page_not_found')
+def page_not_found(e):
+    return render_template('404.html')
 
-@app.errorhandler(500)
-def internal_server_error():
-    return render_template('500'),500
+@app.route('/500')
+def internal_server_error(e):
+    return render_template('500.html')
 
 @app.route('/user/<name>')
 def user(name):
