@@ -12,11 +12,27 @@ from flask import abort
 from flask_script import Manager
 #from flask.ext.bookstrap import Bootstrap
 from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from datetime import datetime
+from flask_wtf import Form
+from wtforms import StringField,SubmitField
+from wtforms.validators import Required
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] =  'hard to guess string'
 #manager = Manager(app)
 bootstarp = Bootstrap(app)
+moment = Moment(app)
+
+@app.route('/',methods=['GET','POST'])
+def index():
+    name = None
+    form = NameForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        form.name.data = ''
+    return render_template('index.html',form=form,name=name)
 
 @app.route('/page_not_found')
 def page_not_found(e):
@@ -56,6 +72,11 @@ def get_user(id):
         abort(404)
     return '<h1>Hello,%s!</h1>' % user.name
 '''
+
+class NameForm(Form):
+
+    name = StringField('What is your name?',validators=[Required()])
+    submit = SubmitField('Submit')
 
 if __name__ == '__main__':
     app.run(debug=True)
