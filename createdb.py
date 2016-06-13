@@ -10,7 +10,12 @@ user_susan = User(username='susan',role=mod_role)
 user_david = User(username='david',role=user_role)
 
 def createDB():
+    '''创建表'''
     db.create_all()
+
+def dropDB():
+    '''删除表'''
+    db.drop_all()
 
 def insertData():
     '''插入行'''
@@ -32,9 +37,15 @@ def insertData():
 def searchData():
    print(Role.query.all())
    print(User.query.all())
+   #print(str(User.query.filter_by(role=user_role).all()))
    #print(User.query.filter_by(role=user_role).all())
    print(str(User.query.filter_by(role=user_role)))
+   user_role1 = Role.query.filter_by(name='User').first()
+   print(user_role1)
+   print(user_role.users)
 
+#createDB()
+#dropDB()
 #insertData()
 searchData()
 
