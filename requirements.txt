@@ -1,1 +1,9 @@
 列出了所有依赖包，便于在其他电脑中重新生成相同的虚拟环境
+生成配置文件:pip freeze >requirements.txt
+创建虚拟环境所需的版本：pip install -r requirements.txt
+• Flask-Login：管理已登录用户的用户会话。
+• Werkzeug：计算密码散列值并进行核对。
+• itsdangerous：生成并核对加密安全令牌。
+• Flask-Mail：发送与认证相关的电子邮件。
+• Flask-Bootstrap：HTML 模板。
+• Flask-WTF：Web 表单。
