@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>登录界面</title>
-</head>
-<body>
-   <h1>这是一个登录界面！</h1>
-</body>
-</html>
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Flask - Login{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Login</h1>
+</div>
+<div class="col-md-4">
+    {{ wtf.quick_form(from) }}
+</div>
+{% endblock %}
+
+<p>
+    New user?
+    <a href="{{ url_for('auth.register') }}">
+        Click here to register
+    </a>
+
+</p>

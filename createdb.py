@@ -1,4 +1,6 @@
-from hello import db,Role,User
+#from hello import db,Role,User
+from app import db
+from app.models import User,Role
 
 
 #创建角色和用户
@@ -45,7 +47,7 @@ def searchData():
    print(user_role.users)
 
 #createDB()
-#dropDB()
+dropDB()
 #insertData()
-searchData()
+#searchData()
 
