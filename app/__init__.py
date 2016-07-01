@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from config import config
 from flask_login import LoginManager
 
+
 bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()
@@ -38,3 +39,4 @@ def create_app(config_name):
 
     # 附加路由和自定义的错误页面
     return app
+

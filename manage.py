@@ -21,7 +21,7 @@ def make_shell_context():
 
 manager.add_command('shell',Shell(make_context=make_shell_context))
 #数据库迁移
-#manager.add_command('db',MigrateCommand)
+manager.add_command('db',MigrateCommand)
 
 
 @manager.command
@@ -33,3 +33,4 @@ def test():
 
 if __name__ == '__main__':
     manager.run()
+    #app.run(debug=True)

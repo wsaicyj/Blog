@@ -1,6 +1,10 @@
-Hello,
-{% if current_user.is_authenticated() %}
-    {{ current_user.username }}
-{% else %}
-    Stranger!
-{%  endif %}
+{% extends "base.html" %}
+
+{% block title %}Flasky{% endblock %}
+
+{% block page_content %}
+<div>
+    <h1>Hello,{% if current_user.is_authenticated %}{{ current_user.username }} {% else %}Stranger{% endif %}</h1>
+</div>
+
+{% endblock %}

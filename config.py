@@ -29,10 +29,12 @@ class DevelopmentConfig(Config):
     MAIL_SERVER = 'smtp.163.com'
     MAIL_PORT = 25
     MAIL_USE_TLS = True
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_USERNAME = 'wsaicyj@163.com'
+    MAIL_PASSWORD = 'cyj232238230'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    FLASK_MAIL_SUBJECT_PREFIX = '[Flask]'
+    FLASK_MAIL_SENDER = 'Flask Admin <wsaicyj@163.com>'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir,'data-dev.sqlite')
 
 
