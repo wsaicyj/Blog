@@ -35,7 +35,9 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     FLASK_MAIL_SUBJECT_PREFIX = '[Flask]'
     FLASK_MAIL_SENDER = 'Flask Admin <wsaicyj@163.com>'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir,'data-dev.sqlite')
+    #SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir,'data-dev.sqlite')
+    #SQLALCHEMY_DATABASE_URI = 'mysql://root:123456@localhost/blog'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123456@localhost/blog'
 
 
 class TestingConfig(Config):

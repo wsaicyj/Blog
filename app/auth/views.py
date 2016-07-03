@@ -48,9 +48,9 @@ def register():
         token = user.generate_confirmation_token()
         send_email(user.email,'Confirm Your Account','auth/email/confirm',user=user,token=token)
         flash('A confirmation email has been sent to you by email.')
-        return redirect(url_for('main.index'))
+        #return redirect(url_for('main.index'))
         #flash('You can now login.')
-        #return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.login'))
     return render_template('auth/register.html',form=form)
 
 
@@ -67,7 +67,7 @@ def confirm(token):
     return redirect(url_for('main.index'))
 
 
-@auth.before_request
+@auth.before_app_request
 def before_request():
     '''
     过滤未确认的账户
@@ -76,14 +76,22 @@ def before_request():
     (3) 请求的端点（使用request.endpoint 获取）不在认证蓝本中。访问认证路由要获取权
     限，因为这些路由的作用是让用户确认账户或执行其他账户管理操作。
     '''
+
     if current_user.is_authenticated \
             and not current_user.confirmed \
             and request.endpoint[:5] != 'auth.' and request.endpoint != 'static':
         return redirect(url_for('auth.unconfirmed'))
 
+    if current_user.is_authenticated:
+        '''更新已登录用户 的访问时间'''
+        current_user.ping()
+        if not current_user.confirmed and request.endpoint[:5] != 'auth.':
+            return redirect(url_for('auth.unconfirmed'))
+
+
 @auth.route('/unconfirmed')
 def unconfirmed():
-    if current_user.is_anonymous() or current_user.confirmed:
+    if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for('main.index'))
     return render_template('auth/unconfirmed.html')
 

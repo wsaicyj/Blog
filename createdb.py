@@ -2,7 +2,7 @@
 from app import db,create_app
 from app.models import User,Role,Permission
 
-
+'''
 #创建角色和用户
 admin_role = Role(name='admin')
 mod_role = Role(name='Moderator')
@@ -10,7 +10,7 @@ user_role = Role(name='User')
 user_john = User(username='john',role=admin_role)
 user_susan = User(username='susan',role=mod_role)
 user_david = User(username='david',role=user_role)
-
+'''
 def createDB():
     '''创建表'''
     app = create_app('default')
@@ -20,6 +20,9 @@ def createDB():
 
 def dropDB():
     '''删除表'''
+    app = create_app('default')
+    app_context = app.app_context()
+    app_context.push()
     db.drop_all()
 
 def insertData():
@@ -50,11 +53,12 @@ def searchData():
    #print(user_role1)
    #print(user_role.users)
 
-#createDB()
+createDB()
 #dropDB()
 #insertData()
 #searchData()
 
+'''
 roles = {
     'User': (Permission.FOLLOW | Permission.COMMENT | Permission.WRITE_ARTICLES),
     'Moderator': (Permission.FOLLOW | Permission.COMMENT | Permission.WRITE_ARTICLES | Permission.MODERATE_COMMENTS, False),
@@ -65,3 +69,4 @@ for r in roles:
     print(r)
     role = Role.query.filter_by(name=r).first()
     print(role)
+'''

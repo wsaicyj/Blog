@@ -9,6 +9,7 @@ from . import login_manager
 from flask_login import UserMixin,AnonymousUserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
+from _datetime import datetime
 
 
 
@@ -21,6 +22,12 @@ class User(UserMixin,db.Model):
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     confirmed = db.Column(db.Boolean,default=False)
+    name = db.Column(db.String(64))   #用户的真实姓名
+    location = db.Column(db.String(64)) #所在地
+    about_me = db.Column(db.Text()) #自我介绍
+    member_since = db.Column(db.DateTime(),default=datetime.utcnow) #注册日期
+    last_seen = db.Column(db.DateTime(),default=datetime.utcnow) #最后访问日期
+
     
     #定义默认的用户角色
     def __init__(self,**kwargs):
@@ -70,6 +77,11 @@ class User(UserMixin,db.Model):
         self.confirmed = True
         db.session.add(self)
         return True
+
+    #刷新用户的最后访问时间
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
 
 
 
