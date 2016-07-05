@@ -13,81 +13,16 @@ from _datetime import datetime
 
 
 
-class User(UserMixin,db.Model):
-    '''创建用户表'''
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(64), unique=True, index=True)
-    username = db.Column(db.String(64), unique=True, index=True)
-    password_hash = db.Column(db.String(128))
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    confirmed = db.Column(db.Boolean,default=False)
-    name = db.Column(db.String(64))   #用户的真实姓名
-    location = db.Column(db.String(64)) #所在地
-    about_me = db.Column(db.Text()) #自我介绍
-    member_since = db.Column(db.DateTime(),default=datetime.utcnow) #注册日期
-    last_seen = db.Column(db.DateTime(),default=datetime.utcnow) #最后访问日期
 
-    
-    #定义默认的用户角色
-    def __init__(self,**kwargs):
-        super(User, self).__init__(**kwargs)
-        if self.role is not None:
-            if self.email == current_app.config['FLASKY_ADMIN']:
-                self.role = Role.query.filter_by(perssion=0xff).first()
-            if self.role is None:
-                self.role = Role.query.filter_by(default=True).first()
-
-    def __repr__(self):
-        return '<User %r>' % self.username
-
-    #检查用户是否有指定的权限
-    def can(self,permissions):
-        return self.role is not None and (self.role.permissions & permissions) == permissions
-
-    #判断用户权限是否为管理员
-    def is_administrator(self):
-        return self.can(Permission.ADMINISTER)
-
-    @property
-    def password(self):
-        raise AttributeError('password is not a readable attribute')
-
-    @password.setter
-    def password(self,password):
-        self.password_hash = generate_password_hash(password)
-
-    def verify_password(self,password):
-        return check_password_hash(self.password_hash,password)
-
-    #生成包含用户id的安全令牌
-    def generate_confirmation_token(self,expiration=3600):
-        s = Serializer(current_app.config['SECRET_KEY'],expiration)
-        return s.dumps({'confirm':self.id})
-
-    #确认用户账户
-    def confirm(self,token):
-        s = Serializer(current_app.config['SECRET_KEY'])
-        try:
-            data = s.loads(token)
-        except:
-            return False
-        if data.get('confirm') != self.id:
-            return False
-        self.confirmed = True
-        db.session.add(self)
-        return True
-
-    #刷新用户的最后访问时间
-    def ping(self):
-        self.last_seen = datetime.utcnow()
-        db.session.add(self)
+class Permission:
+    '''权限常量'''
+    FOLLOW = 0x01
+    COMMENT = 0x02
+    WRITE_ARTICLES = 0x04
+    MODERATE_COMMENTS = 0x08
+    ADMINISTER = 0x80
 
 
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
 
 class Role(db.Model):
@@ -104,7 +39,6 @@ class Role(db.Model):
     default = db.Column(db.Boolean,default=False,index=True)
     permission = db.Column(db.Integer)
     users = db.relationship('User',backref='role',lazy='dynamic')
-
 
     @staticmethod
     def insert_roles():
@@ -125,14 +59,75 @@ class Role(db.Model):
     def __repr__(self):
         return '<Role %r>' % self.name
 
+class User(UserMixin, db.Model):
+    '''创建用户表'''
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(64), unique=True, index=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+    password_hash = db.Column(db.String(128))
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    confirmed = db.Column(db.Boolean, default=False)
+    name = db.Column(db.String(64))  # 用户的真实姓名
+    location = db.Column(db.String(64))  # 所在地
+    about_me = db.Column(db.Text())  # 自我介绍
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)  # 注册日期
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)  # 最后访问日期
 
-class Permission:
-    '''权限常量'''
-    FOLLOW = 0x01
-    COMMENT = 0x02
-    WRITE_ARTICLES = 0x04
-    MODERATE_COMMENTS = 0x08
-    ADMINISTER = 0x80
+    # 定义默认的用户角色
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if self.role is not None:
+            if self.email == current_app.config['FLASKY_ADMIN']:
+                self.role = Role.query.filter_by(perssion=0xff).first()
+            if self.role is None:
+                self.role = Role.query.filter_by(default=True).first()
+
+    def __repr__(self):
+        return '<User %r>' % self.username
+
+    # 检查用户是否有指定的权限
+    def can(self, permission):
+        return self.role is not None and (self.role.permission & permission) == permission
+
+    # 判断用户权限是否为管理员
+    def is_administrator(self):
+        return self.can(Permission.ADMINISTER)
+
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    # 生成包含用户id的安全令牌
+    def generate_confirmation_token(self, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'confirm': self.id})
+
+    # 确认用户账户
+    def confirm(self, token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        if data.get('confirm') != self.id:
+            return False
+        self.confirmed = True
+        db.session.add(self)
+        return True
+
+    # 刷新用户的最后访问时间
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
+
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -144,3 +139,10 @@ class AnonymousUser(AnonymousUserMixin):
 
 
 login_manager.anonymous_user = AnonymousUser
+
+
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
