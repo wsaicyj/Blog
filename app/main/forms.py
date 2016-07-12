@@ -49,3 +49,9 @@ class EditProfileAdminForm(Form):
     def validate_username(self,field):
         if field.data != self.user.username and User.quer.filter_by(username=field.data).first():
             raise ValidationError('Username already in use.')
+
+
+class PostForm(Form):
+    '''博客文章表单'''
+    body = TextAreaField('What is on your mind?',validators=[Required()])
+    submit = SubmitField('Submit')

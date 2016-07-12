@@ -10,9 +10,9 @@ from flask import render_template,session,redirect,url_for,abort,flash
 from . import main
 from .forms import NameForm
 from .. import db
-from ..models import User,Role
+from ..models import User,Role,Permission,Post
 from flask_login import login_required,current_user
-from .forms import EditProfileForm,EditProfileAdminForm
+from .forms import EditProfileForm,EditProfileAdminForm,PostForm
 from ..decorators import admin_required
 
 '''
@@ -24,17 +24,31 @@ def index():
     return render_template('index.html',form=form,name=session.get('name'),known=session.get('known',False),current_time=datetime.utcnow())
 '''
 
+'''
 @main.route('/')
 def index():
     return render_template('index.html')
+'''
+@main.route('/',methods=['GET','POST'])
+def index():
+    '''处理博客文章的首页路由'''
+    form = PostForm()
+    if current_user.can(Permission.WRITE_ARTICLES) and form.validate_on_submit():
+        post = Post(body=form.body.data,author=current_user._get_current_object())
+        db.session.add(post)
+        return redirect(url_for('.index'))
+    posts = Post.query.order_by(Post.timetamp.desc()).all()
+    return render_template('index.html',form=form,posts=posts)
+
 
 @main.route('/user/<username>')
 def user(username):
-    '''资料页面的路由'''
+    '''资料页面的路由/获取博客文章的资料页路由'''
     user = User.query.filter_by(username=username).first()
     if user is None:
         abort(404)
-    return render_template('user.html',user=user)
+    posts = user.posts.order_by(Post.timetamp.desc()).all()
+    return render_template('user.html',user=user,posts=posts)
 
 @main.route('/edit-profile',methods=['GET','POST'])
 @login_required
@@ -79,3 +93,6 @@ def edit_profile_admin(id):
     form.location.data = user.location
     form.about_me.data = user.about_me
     return render_template('edit_profile.html',form=form,user=user)
+
+
+

@@ -73,6 +73,7 @@ class User(UserMixin, db.Model):
     about_me = db.Column(db.Text())  # 自我介绍
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)  # 注册日期
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)  # 最后访问日期
+    posts = db.relationship('Post',backref='author',lazy='dynamic')
 
     # 定义默认的用户角色
     def __init__(self, **kwargs):
@@ -138,8 +139,18 @@ class AnonymousUser(AnonymousUserMixin):
         return False
 
 
-login_manager.anonymous_user = AnonymousUser
+class Post(db.Model):
+    '''
+    文章模型
+    '''
+    __tablename__ =  'posts'
+    id = db.Column(db.Integer,primary_key=True)
+    body = db.Column(db.Text)
+    timetamp = db.Column(db.DateTime,index=True,default=datetime.utcnow)
+    author_id = db.Column(db.Integer,db.ForeignKey('users.id'))
 
+
+login_manager.anonymous_user = AnonymousUser
 
 
 
