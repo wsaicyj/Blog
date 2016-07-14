@@ -12,7 +12,7 @@ ul.posts {
     list-style-type: none;
     padding: 0px;
     margin: 16px 0px 0px 0px;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #272ce0;
 }
 div.post-tabs ul.posts {
     margin: 0px;
@@ -20,10 +20,10 @@ div.post-tabs ul.posts {
 }
 ul.posts li.post {
     padding: 8px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #dd3ce0;
 }
 ul.posts li.post:hover {
-    background-color: #f0f0f0;
+    background-color: #2af02c;
 }
 div.post-date {
     float: right;
@@ -55,7 +55,7 @@ ul.comments {
 ul.comments li.comment {
     margin-left: 32px;
     padding: 8px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e08856;
 }
 ul.comments li.comment:nth-child(1) {
     border-top: 1px solid #e0e0e0;

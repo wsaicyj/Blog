@@ -38,6 +38,7 @@ class DevelopmentConfig(Config):
     #SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir,'data-dev.sqlite')
     #SQLALCHEMY_DATABASE_URI = 'mysql://root:123456@localhost/blog'
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123456@localhost/blog'
+    FLASKY_POSTS_PER_PAGE = 10
 
 
 class TestingConfig(Config):

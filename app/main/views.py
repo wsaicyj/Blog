@@ -5,10 +5,10 @@ __author__ = 'Aaron_chan'
 
 #保存程序的路由
 
-from datetime import datetime
-from flask import render_template,session,redirect,url_for,abort,flash
+# from datetime import datetime
+from flask import render_template,session,redirect,url_for,abort,flash,request,current_app
 from . import main
-from .forms import NameForm
+# from .forms import NameForm
 from .. import db
 from ..models import User,Role,Permission,Post
 from flask_login import login_required,current_user
@@ -37,8 +37,12 @@ def index():
         post = Post(body=form.body.data,author=current_user._get_current_object())
         db.session.add(post)
         return redirect(url_for('.index'))
-    posts = Post.query.order_by(Post.timetamp.desc()).all()
-    return render_template('index.html',form=form,posts=posts)
+    page = request.args.get('page',1,type=int)
+    pagination = Post.query.order_by(Post.timetamp.desc()).paginate(
+        page,per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],error_out=False
+    )
+    posts = pagination.items
+    return render_template('index.html',form=form,posts=posts,pagination=pagination)
 
 
 @main.route('/user/<username>')
